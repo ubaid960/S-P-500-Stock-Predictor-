@@ -1,39 +1,57 @@
-# History files
-.Rhistory
-.Rapp.history
+---
+title: "Sp500"
+author: "Ravi, Ubaid, Ethan, Punit"
+date: "12/12/2019"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+### Our project is to use graphing and learning using R to analyze trends in the stock market, specifically looking at the S&P 500 index*. We wanted to use concepts learned such as:“as.Date” to convert data types into dates to identify future trends in the stock market. as well converting data from factor to numeric to analyze and predict whether the index would rise or fluctuate.*S&P 500 is a traded index of the largest 500 companies in the U.S.; experts consider the index to be the best representation of the stock market. This project was inspiring to all of us as we are all very interested in finance, and thought for this project to create a graph to help us make smarter investing decisions and build our net worth, especially as students having a side income would be very helpful. 
 
-# Session Data files
-.RData
+### The data is from both 'Yahoo Data' as well as from data.hub, the data was from two different sources, so the first thing we have to do after reading is to merge the two data. 
 
-# User-specific files
-.Ruserdata
+###  installing the necessary packages: Ggplot 2
 
-# Example code in package build process
-*-Ex.R
+```{r}
+sp500 <- read.csv(file = "~/Desktop/DATA/SP500.csv")
+gspc<- read.csv(file = "~/Desktop/DATA/^GSPC.csv")
+install.packages("ggplot2",repos='http://cran.us.r-project.org')
+library("ggplot2")
+```
 
-# Output files from R CMD build
-/*.tar.gz
+###Merging the Data is done by setting 'gspc' and selecting the gspc$Date, and the SP500 = gspc$close which is the closing value. 
+```{r}
+FORMERGE<- data.frame(DATE = gspc$Date,SP500 = gspc$Adj.Close)
+gspc$Date
+gspc$Adj.Close
+sp500.frame <- rbind(sp500,FORMERGE)
+x <- sp500.frame
+## This is the plot below
+plot(FORMERGE)
+```
+## The plot FORMERGE is the 2018 to 2019-10-09
 
-# Output files from R CMD check
-/*.Rcheck/
+### Now, to combine the two sets together, we take x$DATE from the sp500.data.frame, and the value from the GSPC, and merge them together.
+#### The 'date' has to be converted into as.numeric, and the value of the sp500 has to be as.numeric(as.character) x$sp500
+```{r}
+df <- data.frame(Time <- as.numeric(x$DATE), Value<- as.numeric(as.character(x$SP500)))
+### This is the data frame associated iwth it
+time.frame <- data.frame(Time)
+sp50000.frame <- data.frame(Value)
+```
+### Then using the ggplot function, we add a geom_smooth curve create a moving average line that goes throughout the data. This moving average shows the change between 2014, and one thousand days from there
+```{r}
+sp <- ggplot(df, aes(x = Time, y = Value)) + geom_smooth() + geom_point(mapping = NULL, colour = "black", size = 0.05) 
+plot(sp)
+#vector.time <- data.frame(as.vector(time.frame))
+#vector.date <- data.frame(as.vector(sp50000.frame))
+#thefinaldata <- data.frame(vector.time, vector.date)
+#gggplot<- ggplot(thefinaldata, aes(x = vector.time, y = vector.date))
+#sp + facet_wrap(Time, Value)
+```
+## The plot shows the dates from 0-1000 between 2014 till 2019, all in days. The issue at hand was that the data time cannot be shifted into the actual dates as the method at which to change the data creates an error. It can be said withi the first 500 days (from 2014- 2015), the sp500 fluctuated however stayed below the 2000 USD. From 500 days onwards to 1000 days (the next 500 days) was one of the largest bull rises on average (seeing from the moving average), this shows that the market was very strong, and the United States SP500 companies performed extraordinarly well. 
 
-# RStudio files
-.Rproj.user/
 
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
+## However, the error we ran into was that the facet_wrap did not load because the data is not coerced properly, even though it has been done so. the error: Only the first value of nrow will be used. coercing nrow, however the data does not load. The experiece taught us a lot to do with organization, and merging very different data sources to create a graph. The moving average is truly helpful in prediction as it prevents us from making shortsells by accident (like seen between 500 to 1000 days, a rise in total but small shorts). In the future, we could further organize our data and have a predictor function to be able to utilize all of our 1000+ data points that we have, and with that would be when we can make exectuive decisions. 
 
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
-.httr-oauth
-
-# knitr and R markdown default cache directories
-*_cache/
-/cache/
-
-# Temporary files created by R markdown
-*.utf8.md
-*.knit.md
-
-# R Environment Variables
-.Renviron
